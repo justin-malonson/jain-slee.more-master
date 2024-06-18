@@ -1,0 +1,38 @@
+### title   JAIN SLEE TCK 1.1 Exclude List
+### version 1.0 build 04, exclude list 1 (02 JUL 2008)
+
+##################################################################
+# This file specifies the tests which are to be 
+# excluded from the test suite, and the reasons
+# why they are excluded.
+#
+# Syntax: 
+# Test_URL 			BugID 	Keywords 	Reason
+#
+# Test_URL: the url of the test description, relative to the test suite
+# BugID: matches the ID of the corresponding bug in the TCK bug list
+# Keywords: not used - specify "n/a"
+# Reason: free text explaining the reason why the test is excluded
+#
+# Note: see the JAIN SLEE TCK 1.1 bug list for more details about excluded tests.
+# The bug list is available at the JAIN SLEE TCK 1.1 download site 
+# (http://www.opencloud.com/sleetck/download.html)
+#
+##################################################################
+
+# Exclude list for TCK 1.0
+#tests/preparatory/testengine/TestEngineTest.xml  	-1  	n/a 	This is an example row
+tests/activities/activitycontext/Test561Test.xml         1      n/a     This test was challenged, found to be invalid, and removed on 12 Nov 2004. (Seebug number 1 in the TCK bug list)
+tests/api/signaturetest/SleeSignatureTest.xml           -1      n/a     While SLEE 1.1 is backwards compatible, the APIs have changed. This test has been superceded by SleeSignatureTest1_1.xml
+
+# These tests are no longer appropriate as TCK1.1-RA unregisters eventhandlers on stopping SLEE.
+tests/management/sleestate/Test1882Test.xml                     -1      n/a     TCK1.1-RA unregisters eventhandlers on stopping SLEE.
+tests/management/sleestate/CreateActivityWhileStoppingTest.xml  -1      n/a     TCK1.1-RA unregisters eventhandlers on stopping SLEE.
+tests/events/servicestarted/Test2185Test.xml                    -1      n/a     TCK1.1-RA unregisters eventhandlers on stopping SLEE.                                         
+
+# this test only passes with single thread
+tests/transactions/isolation/Test2004Test.xml
+
+##########
+
+tests/api/signaturetest/SleeSignatureTest1_1.xml				-1		n/a		Comment

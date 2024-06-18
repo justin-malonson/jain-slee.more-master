@@ -1,0 +1,70 @@
+
+<project basedir="." default="run-tck" name="slee11.tck">
+
+	<target name="run-tck" description="Invoke this target with a file pattern for TCK test. For example -Dtests=tests/sbb or -Dtests=tests/sbb/abstractclass/Test522Test">
+
+		<property environment="env"/>
+		<property name="jboss.home" value="${env.JBOSS_HOME}" />
+		<property name="jboss.modules" value="${env.JBOSS_HOME}/modules/system/layers/base" />
+
+		<property name="tests" value="tests" />
+		
+		<property name="slee-tck-tests-pattern" value="${tests}" />
+		
+		<path id="slee.tck.home.path.id">
+			<pathelement location="${ant.file.slee11.tck}/.." />
+		</path>
+		<pathconvert targetos="unix" property="slee.tck.home" refid="slee.tck.home.path.id" />
+
+		<path id="slee.tck.du.path.id">
+			<pathelement location="${slee.tck.home}/jars/deployable-units" />
+		</path>
+		<pathconvert targetos="unix" property="slee.tck.du.path" refid="slee.tck.du.path.id" />
+
+		<path id="slee.tck.testsuite.path.id">
+			<pathelement location="${slee.tck.home}/testsuite" />
+		</path>
+		<pathconvert targetos="unix" property="slee.tck.testsuite.path" refid="slee.tck.testsuite.path.id" />
+
+		<path id="slee.tck.reports.path.id">
+			<pathelement location="${slee.tck.home}/reports" />
+		</path>
+		<pathconvert targetos="unix" property="slee.tck.reports.path" refid="slee.tck.reports.path.id" />
+
+		<path id="slee.tck.jtx.file.id">
+			<pathelement location="${slee.tck.home}/testsuite/jain-slee-tck-1_1.jtx" />
+		</path>
+		<pathconvert targetos="unix" property="slee.tck.jtx.file" refid="slee.tck.jtx.file.id" />
+
+		<echo>ant.file.slee11.tck=${ant.file.slee11.tck}</echo>
+		<echo>slee.tck.home=${slee.tck.home}</echo>
+		<echo>jboss.home=${env.JBOSS_HOME}</echo>
+		<echo>slee.tck.testsuite.path=${slee.tck.testsuite.path}</echo>
+		<property name="tck.params" value=" -batch 'testsuite ${slee.tck.testsuite.path};workDirectory -create -overwrite ${slee.tck.home}/tckwork;open ${slee.tck.home}/config/sleetck.jti;set sleetck.env.connections.tckResourceHostIP 127.0.0.1;set sleetck.env.user-options.restartBetweenTests true; set sleetck.env.connections.jmxAgentHostIP 127.0.0.1;set sleetck.tests.needTests Yes; set sleetck.env.connections.componentUrlPrefix file\:${slee.tck.du.path};set sleetck.env.user-options.defaultTimeout 30000;set sleetck.env.user-options.sbbTraceLevel FINE; set sleetck.env.user-options.debugLevel FINE; concurrency 1; set sleetck.excludeList.customFiles jain-slee-tck-1_1.jtx; tests ${slee-tck-tests-pattern};runtests;writereport ${slee.tck.reports.path};' " />
+		<echo>Starting TCK with params: ${tck.params}</echo>
+		<echo>Excluding tests listed in file: ${slee.tck.jtx.file}</echo>
+		<java classname="com.sun.javatest.tool.Main" fork="yes" maxmemory="256m">
+			<sysproperty key="java.security.manager" value="" />
+			<sysproperty key="javatest.security.allowPropertiesAccess" value="true" />
+			<sysproperty key="java.security.policy" value="${slee.tck.home}/config/tck-security.policy" />
+			<sysproperty key="org.xml.sax.driver" value="org.apache.xerces.parsers.SAXParser" />
+			<jvmarg line="-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=8484,server=y,suspend=n" />
+			<arg line="${tck.params}" />
+			<classpath>
+				<pathelement location="${slee.tck.home}/lib/jta-1.1.jar" />
+				<pathelement location="${slee.tck.home}/jars/sleetck.jar" />
+				<pathelement location="${slee.tck.home}/lib/slee.jar" />
+				<pathelement location="${slee.tck.home}/lib/javatest.jar" />
+				<pathelement location="${slee.tck.home}/lib/xerces.jar" />
+				<pathelement location="${slee.tck.home}/lib/sigtest.jar" />
+				<pathelement location="${ant.home}/lib/ant.jar" />
+				<fileset dir="${jboss.modules}/javax/persistence/api/main"><include name="*.jar" /></fileset>
+				<fileset dir="${jboss.modules}/org/hibernate/main"><include name="*.jar" /></fileset>
+				<fileset dir="${jboss.modules}/com/h2database/h2/main"><include name="*.jar" /></fileset>
+				<fileset dir="${jboss.modules}/org/apache/commons/lang/main"><include name="*.jar" /></fileset>
+			</classpath>
+		</java>
+		<echo>SLEE TCK report available at ${slee.tck.reports.path}/report.html</echo>
+	</target>
+
+</project>

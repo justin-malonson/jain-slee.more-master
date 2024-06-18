@@ -1,0 +1,82 @@
+// ***************************************
+// Trusted core Java code
+//***************************************
+grant codeBase "file:${java.home}/lib/ext/-" {
+   permission java.security.AllPermission;
+};
+grant codeBase "file:${java.home}/lib/-" {
+   permission java.security.AllPermission;
+};
+// For java.home pointing to the JDK jre directory
+grant codeBase "file:${java.home}/../lib/-" {
+   permission java.security.AllPermission;
+};
+grant codeBase "file:@JAVA_HOME@/lib/tools.jar" {
+	permission java.security.AllPermission;
+};
+
+
+
+//********************************************  
+// Trusted core JBoss code  
+//********************************************  
+grant codeBase "file:${jboss.defined.home}/jboss-modules.jar" {
+   permission java.security.AllPermission;
+};
+
+
+grant codeBase "file:${jboss.defined.home}/bin/-" {
+   permission java.security.AllPermission;
+};
+//grant codeBase "file:${jboss.defined.home}/standalone/-" {
+//   permission java.security.AllPermission;
+//};
+grant codeBase "file:${jboss.defined.home}/modules/-" {
+   permission java.security.AllPermission;
+};
+
+
+//Strictly for tck
+//grant codeBase "file:${jboss.defined.home}/standalone/deployments/h2console.war" {
+//   permission java.security.AllPermission;
+//};
+grant codeBase "file:${jboss.defined.home}/standalone/deployments/restcomm-slee-tck-ra-du.jar" {
+   permission java.security.AllPermission;
+};
+
+
+//****************************************************************
+//  Default block of permissions
+// Minimal permissions are allowed to everyone else
+//****************************************************************
+grant {
+
+	permission java.util.PropertyPermission "*", "read";
+	permission java.util.PropertyPermission "java.version", "read";
+	permission java.util.PropertyPermission "java.vendor", "read";
+	permission java.util.PropertyPermission "java.vendor.url", "read";
+	permission java.util.PropertyPermission "java.class.version", "read";
+	permission java.util.PropertyPermission "os.name", "read";
+	permission java.util.PropertyPermission "os.version", "read";
+	permission java.util.PropertyPermission "os.arch", "read";
+	permission java.util.PropertyPermission "file.separator", "read";
+	permission java.util.PropertyPermission "path.separator", "read";
+	permission java.util.PropertyPermission "line.separator", "read";
+
+	permission java.util.PropertyPermission "java.specification.version", "read";
+	permission java.util.PropertyPermission "java.specification.vendor", "read";
+	permission java.util.PropertyPermission "java.specification.name", "read";
+
+	permission java.util.PropertyPermission "java.vm.specification.version", "read";
+	permission java.util.PropertyPermission "java.vm.specification.vendor", "read";
+	permission java.util.PropertyPermission "java.vm.specification.name", "read";
+	permission java.util.PropertyPermission "java.vm.version", "read";
+	permission java.util.PropertyPermission "java.vm.vendor", "read";
+	permission java.util.PropertyPermission "java.vm.name", "read";
+
+	permission java.io.FilePermission "${jboss.defined.home}/standalone/tmp/-", "read";
+	//permission java.io.FilePermission "${jboss.defined.home}/server/lib/quartz.jar/org/quartz/quartz.properties", "read";
+	permission org.jboss.naming.JndiPermission "<<ALL BINDINGS>>","lookup";
+	//permission java.io.FilePermission "quartz.properties", "read";
+ 	permission javax.management.MBeanTrustPermission "*";
+};

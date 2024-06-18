@@ -1,0 +1,38 @@
+<assembly>
+    <id>tck-bean</id>
+    <formats>
+        <format>dir</format>
+    </formats>
+    <baseDirectory>main</baseDirectory>
+
+    <!--
+    <fileSets>
+        <fileSet>
+            <directory>target/classes</directory>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+    </fileSets>
+    -->
+    <fileSets>
+        <fileSet>
+            <directory>src/main/module</directory>
+            <outputDirectory>/</outputDirectory>
+            <filtered>true</filtered>
+        </fileSet>
+    </fileSets>
+
+    <dependencySets>
+        <!--
+        <dependencySet>
+            <outputDirectory>/lib</outputDirectory>
+            <includes>
+                <include>com.opencloud:sleetck</include>
+            </includes>
+        </dependencySet>
+        -->
+        <dependencySet>
+            <outputDirectory>/</outputDirectory>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+        </dependencySet>
+    </dependencySets>
+</assembly>

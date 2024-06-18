@@ -1,0 +1,154 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.mobicents.servers.jainslee.tck</groupId>
+		<artifactId>restcomm-slee-tck-ra</artifactId>
+		<version>2.2.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>restcomm-slee-tck-ra-du</artifactId>
+
+	<name>Restcomm :: JAIN SLEE Server :: TCK :: ${pom.artifactId}</name>
+
+	<properties>
+		<jboss.modules>${jboss.home}/modules/system/layers/base</jboss.modules>
+		<tests>tests</tests>
+		<slee-tck-tests-pattern>${tests}</slee-tck-tests-pattern>
+		<slee.tck.home>${session.executionRootDirectory}/testsuite</slee.tck.home>
+		<slee.tck.du.path>${slee.tck.home}/jars/deployable-units</slee.tck.du.path>
+		<slee.tck.reports.path>${slee.tck.home}/reports</slee.tck.reports.path>
+		<slee.tck.testsuite.path>${slee.tck.home}/testsuite</slee.tck.testsuite.path>
+		<slee.tck.jtx.file>${slee.tck.testsuite.path}/jain-slee-tck-1_1.jtx</slee.tck.jtx.file>
+		<java.security.manager></java.security.manager>
+		<javatest.security.allowPropertiesAccess>true</javatest.security.allowPropertiesAccess>
+		<java.security.policy>${slee.tck.home}/config/tck-security.policy</java.security.policy>
+		<org.xml.sax.driver>org.apache.xerces.parsers.SAXParser</org.xml.sax.driver>
+	</properties>
+	
+	<dependencies>
+		<!-- components -->
+		<!-- <dependency> <groupId>com.opencloud</groupId> <artifactId>sleetck-ra-events</artifactId> 
+			<version>1.1</version> </dependency> <dependency> <groupId>com.opencloud</groupId> 
+			<artifactId>sleetck-ra-type</artifactId> <version>1.1</version> </dependency> 
+			<dependency> <groupId>com.opencloud</groupId> <artifactId>sleetck-ra</artifactId> 
+			<version>1.1</version> </dependency> -->
+
+		<dependency>
+			<artifactId>restcomm-slee-tck-ra-events</artifactId>
+			<groupId>${pom.groupId}</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+
+		<dependency>
+			<artifactId>restcomm-slee-tck-ra-ratype</artifactId>
+			<groupId>${pom.groupId}</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>restcomm-slee-tck-ra-ra</artifactId>
+			<groupId>${pom.groupId}</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>deploy-du</id>
+			<build>
+				<finalName>restcomm-slee-tck-ra-du</finalName>
+				<plugins>
+					<plugin>
+						<groupId>org.mobicents.tools</groupId>
+						<artifactId>maven-du-plugin</artifactId>
+						<version>4.0.2</version>
+						<extensions>true</extensions>
+						<configuration />
+						<executions>
+							<execution>
+								<goals>
+									<goal>copy-dependencies</goal>
+									<goal>generate-descriptor</goal>
+									<goal>generate-ant-management-script</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy-DU</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<copy overwrite="true" file="target/${project.build.finalName}.jar"
+											todir="${jboss.home}/standalone/deployments" />
+									</tasks>
+								</configuration>
+							</execution>
+							<execution>
+								<id>undeploy-DU</id>
+								<phase>clean</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<delete
+											file="${jboss.home}/standalone/deployments/${project.build.finalName}.jar" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>run-tck</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.6.0</version>
+						<executions>
+							<execution>
+								<id>run-tck</id>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<phase>test</phase>
+								<configuration>
+									<classpathScope>system</classpathScope>
+									<executable>java</executable>
+									<arguments>
+										<argument>-Xdebug</argument>
+										<argument>-Xnoagent</argument>
+										<argument>-Xrunjdwp:transport=dt_socket,address=8484,server=y,suspend=n</argument>
+										<argument>-Xmx256m</argument>
+										<argument>-Djava.security.manager=${java.security.manager}</argument>
+										<argument>-Djavatest.security.allowPropertiesAccess=${javatest.security.allowPropertiesAccess}</argument>
+										<argument>-Djava.security.policy=${java.security.policy}</argument>
+										<argument>-Dorg.xml.sax.driver=${org.xml.sax.driver}</argument>
+										<argument>-cp</argument>
+										<argument>${slee.tck.home}/lib/jta-1.1.jar:${slee.tck.home}/jars/sleetck.jar:${slee.tck.home}/lib/slee.jar:${slee.tck.home}/lib/javatest.jar:${slee.tck.home}/lib/xerces.jar:${slee.tck.home}/lib/sigtest.jar:${jboss.modules}/javax/persistence/api/main/hibernate-jpa-2.1-api-1.0.0.Final.jar:${jboss.modules}/org/hibernate/main/hibernate-core-5.0.10.Final.jar:${jboss.modules}/org/hibernate/main/hibernate-entitymanager-5.0.10.Final.jar:${jboss.modules}/org/hibernate/main/hibernate-envers-5.0.10.Final.jar:${jboss.modules}/org/hibernate/main/hibernate-java8-5.0.10.Final.jar:${jboss.modules}/com/h2database/h2/main/h2-1.4.193.jar:${jboss.modules}/org/apache/commons/lang/main/commons-lang-2.6.jar</argument>
+										<argument>com.sun.javatest.tool.Main</argument>
+										<argument>-batch</argument>
+										<argument>testsuite ${slee.tck.testsuite.path};workDirectory -create -overwrite ${slee.tck.home}/tckwork;open ${slee.tck.home}/config/sleetck.jti;set sleetck.env.connections.tckResourceHostIP 127.0.0.1;set sleetck.env.user-options.restartBetweenTests true; set sleetck.env.connections.jmxAgentHostIP 127.0.0.1;set sleetck.tests.needTests Yes; set sleetck.env.connections.componentUrlPrefix file\:${slee.tck.du.path};set sleetck.env.user-options.defaultTimeout 30000;set sleetck.env.user-options.sbbTraceLevel FINE; set sleetck.env.user-options.debugLevel FINE; concurrency 1; set sleetck.excludeList.customFiles jain-slee-tck-1_1.jtx; tests ${slee-tck-tests-pattern};runtests;writereport ${slee.tck.reports.path};</argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>
